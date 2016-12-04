@@ -198,47 +198,124 @@ dphiJdl1 = [ 1-9*L2'.*L3'+9*L1'.*L2' -9*L2'.*L3'+9*L1'.*L2' -9*L2'.*L3'-(1-9*L1'
 
 dphiJdl2 = [ -9*L1'.*L3'+9*L1'.*L2' 1-9*L1'.*L3'+9*L1'.*L2' -9*L1'.*L3'-(1-9*L1'.*L2') 27*L1'.*L3'-27*L1'.*L2' ];
 
-  for k=1:quadpoints
-    valx = 0.0;
-    valy = 0.0;
-    for i=1:ngleu
-      valx = valx + X(v(i)) * phiJ(k,i);
-      valy = valy + Y(v(i)) * phiJ(k,i);
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% % linear                                                   %
+% utilizado no calculo das matrizes elementares gxele, gyele %
+% e gzele, atendendo a codicao de deslizamento presente nos  %
+% modelos de terreno do GESAR.                               %
+% OBS. para este condicao, a matriz do divergente nao eh     %
+% a matrix do gradiente transposta                           %
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+dgqPointsdl1 = sparse(norder,nglep);
+dgqPointsdl2 = sparse(norder,nglep);
+dgqPointsdl1(:,1)=ones;
+dgqPointsdl1(:,2)=zeros;
+dgqPointsdl1(:,3)=-ones;
+dgqPointsdl2(:,1)=zeros;
+dgqPointsdl2(:,2)=ones;
+dgqPointsdl2(:,3)=-ones;
+
+for k=1:quadpoints
+ valxlin = 0.0;
+ valylin = 0.0;
+ for i=1:nglep
+  valxlin = valxlin + X(v(i)) * gqPoints(k,i);
+  valylin = valylin + Y(v(i)) * gqPoints(k,i);
+ end;
+ localxlin(k) = valxlin;
+ localylin(k) = valylin;
+end;
+
+for k=1:quadpoints
+    valxl1lin = 0.0;
+    valxl2lin = 0.0;
+    valyl1lin = 0.0;
+    valyl2lin = 0.0;
+    for i=1:nglep
+        valxl1lin = valxl1lin + X(v(i))* dgqPointsdl1(k,i);
+        valxl2lin = valxl2lin + X(v(i))* dgqPointsdl2(k,i);
+        valyl1lin = valyl1lin + Y(v(i))* dgqPointsdl1(k,i);
+        valyl2lin = valyl2lin + Y(v(i))* dgqPointsdl2(k,i);
     end;
-    localx(k) = valx;
-    localy(k) = valy;
+    dxdl1lin(k) = valxl1lin;
+    dxdl2lin(k) = valxl2lin;
+    dydl1lin(k) = valyl1lin;
+    dydl2lin(k) = valyl2lin;
+end;
+
+for k=1:quadpoints
+    dxdllin=[dxdl1lin(k) dxdl2lin(k);...
+             dydl1lin(k) dydl2lin(k) ];
+    invdxdllin=inv(dxdllin);
+    for i=1:nglep
+        dgqPointsdl = [dgqPointsdl1(k,i) dgqPointsdl2(k,i)];
+        dgqPoints = dgqPointsdl*invdxdllin;
+        dgqPointsdx(k,i) = dgqPoints(1);
+        dgqPointsdy(k,i) = dgqPoints(2);
+    end;
+end;
+
+% Formulacao de Sao Carlos - validada
+%--------------------------------------------------
+% for k=1:quadpoints
+%   for i=1:ngleu
+%     dgqPointsdx(k,i) = (dgqPointsdl1(k,i)*dydl2lin(k)-dgqPointsdl2(k,i)*dydl1lin(k))/jacobian;
+%     dgqPointsdy(k,i) = (-dgqPointsdl1(k,i)*dxdl2lin(k)+dgqPointsdl2(k,i)*dxdl1lin(k))/jacobian;
+%   end;
+% end;
+%-------------------------------------------------- 
+
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% % cubic (mini)                                             %
+% utilizado no calculo das matrizes elementares gxele e      %
+% gyele, atendendo a codicao de deslizamento presente nos    %
+% modelos axissimetricos.                                    %
+% OBS. para este condicao, a matriz do divergente nao eh     %
+% a matrix do gradiente transposta                           %
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+for k=1:quadpoints
+  valx = 0.0;
+  valy = 0.0;
+  for i=1:ngleu
+    valx = valx + X(v(i)) * phiJ(k,i);
+    valy = valy + Y(v(i)) * phiJ(k,i);
+  end;
+  localx(k) = valx;
+  localy(k) = valy;
+end;
+
+for k=1:quadpoints
+  valxl1 = 0.0;
+  valxl2 = 0.0;
+  valyl1 = 0.0;
+  valyl2 = 0.0;
+  for i=1:ngleu
+    valxl1 = valxl1 + X(v(i))* dphiJdl1(k,i);
+    valxl2 = valxl2 + X(v(i))* dphiJdl2(k,i);
+    valyl1 = valyl1 + Y(v(i))* dphiJdl1(k,i);
+    valyl2 = valyl2 + Y(v(i))* dphiJdl2(k,i);
+    end;
+  dxdl1(k) = valxl1;
+  dxdl2(k) = valxl2;
+  dydl1(k) = valyl1;
+  dydl2(k) = valyl2;
   end;
 
-  for k=1:quadpoints
-    valxl1 = 0.0;
-    valxl2 = 0.0;
-    valyl1 = 0.0;
-    valyl2 = 0.0;
-    for i=1:ngleu
-      valxl1 = valxl1 + X(v(i))* dphiJdl1(k,i);
-      valxl2 = valxl2 + X(v(i))* dphiJdl2(k,i);
-      valyl1 = valyl1 + Y(v(i))* dphiJdl1(k,i);
-      valyl2 = valyl2 + Y(v(i))* dphiJdl2(k,i);
-      end;
-    dxdl1(k) = valxl1;
-    dxdl2(k) = valxl2;
-    dydl1(k) = valyl1;
-    dydl2(k) = valyl2;
-    end;
-
- %% formulacao proposta para o caso 3D - correta!   
-    
-  for k=1:quadpoints
-    dxdl=[dxdl1(k) dxdl2(k);...
-          dydl1(k) dydl2(k)];
-    for i=1:ngleu
-        dphiJdl = [dphiJdl1(k,i) dphiJdl2(k,i)];
-        dphiJ = dphiJdl*inv(dxdl);
-        dphiJdx(k,i) = dphiJ(1);
-        dphiJdy(k,i) = dphiJ(2); 
-    end;
+% formulacao proposta para o caso 3D - correta!   
+  
+for k=1:quadpoints
+  dxdl=[dxdl1(k) dxdl2(k);...
+        dydl1(k) dydl2(k)];
+  for i=1:ngleu
+      dphiJdl = [dphiJdl1(k,i) dphiJdl2(k,i)];
+      dphiJ = dphiJdl*inv(dxdl);
+      dphiJdx(k,i) = dphiJ(1);
+      dphiJdy(k,i) = dphiJ(2); 
   end;
-    
+end;
+  
 %% formulacao proposto por Sao Carlos - correta!
 %% tanto faz usar uma ou outra. Caso 3D validado!
 
@@ -264,7 +341,10 @@ for i=1:ngleu
            kyy(i,j)=kyy(i,j)+dphiJdy(k,i)*dphiJdy(k,j)*jacobian*gqWeights(k);
            kyx(i,j)=kyx(i,j)+dphiJdy(k,i)*dphiJdx(k,j)*jacobian*gqWeights(k);
            kxy(i,j)=kxy(i,j)+dphiJdx(k,i)*dphiJdy(k,j)*jacobian*gqWeights(k);
+           % 3rd term of laplacian axissymetric in x and y
+           % kx = Ni * dNj/dx
 		   kx(i,j)=kx(i,j)+phiJ(k,i)*dphiJdx(k,j)*jacobian*gqWeights(k);
+           % ky = Ni * dNj/dy
 		   ky(i,j)=ky(i,j)+phiJ(k,i)*dphiJdy(k,j)*jacobian*gqWeights(k);
         end;
     end;
@@ -279,10 +359,14 @@ dmass=zeros(nglep,ngleu);
 for i=1:ngleu
     for j=1:nglep
         for k=1:quadpoints
-            gxele(i,j)=gxele(i,j)-gqPoints(k,j)*dphiJdx(k,i)*jacobian*gqWeights(k);
-            gyele(i,j)=gyele(i,j)-gqPoints(k,j)*dphiJdy(k,i)*jacobian*gqWeights(k);
+            gxele(i,j)=gxele(i,j)+dgqPointsdx(k,j)*phiJ(k,i)*jacobian*gqWeights(k);
+            gyele(i,j)=gyele(i,j)+dgqPointsdy(k,j)*phiJ(k,i)*jacobian*gqWeights(k);
+            % dxele = dNi/dx * Cj
             dxele(j,i)=dxele(j,i)-gqPoints(k,j)*dphiJdx(k,i)*jacobian*gqWeights(k);
+            % dyele = dNi/dy * Cj
             dyele(j,i)=dyele(j,i)-gqPoints(k,j)*dphiJdy(k,i)*jacobian*gqWeights(k);
+            % 3rd term of axissymetric divergent operator 
+            % dmass = Ni * Cj (where Cj is linear weight function)
 			dmass(j,i)=dmass(j,i)-phiJ(k,i)*gqPoints(k,j)*jacobian*gqWeights(k);
 
         end;
