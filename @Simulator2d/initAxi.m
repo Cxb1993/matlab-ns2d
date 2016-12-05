@@ -48,7 +48,7 @@ for mele = 1:nele
     v3=IEN(mele,3);
     mele/nele
 
-	radius = Y[v1]+Y[v2]+Y[v3]/3.0;
+	radius = Y(v1)+Y(v2)+Y(v3)/3.0;
 
     [massele,kxx,kyy,kxy,kyx,kx,ky,gxele,gyele,dxele,dyele,dmass,ngleu,nglep,v]=getmgqAxi(element,mele,IEN,X,Y,Z);
 
@@ -59,16 +59,19 @@ for mele = 1:nele
     % K= [11 0]
     % M= [0 22]
 
+    %K11(v,v) = K11(v,v)+(kxx+kyy);
     K11(v,v) = K11(v,v)+(kxx+kyy-(1.0/radius)*ky);
+
+    %K22(v,v) = K22(v,v)+(kxx+kyy);
     K22(v,v) = K22(v,v)+(kxx+kyy-(1.0/radius)*ky+(1.0/(radius*radius))*massele);
     M(v,v) = M(v,v)+massele;
 
     G1(v,vp)=G1(v,vp)+gxele;
     G2(v,vp)=G2(v,vp)+gyele;
 
-    D1(vp,v)=G1(vp,v)+dxele;
-    D2(vp,v)=G2(vp,v)+dyele+(1.0/radius)*dmass;
-
+    D1(vp,v)=D1(vp,v)+dxele;
+    %D2(vp,v)=D2(vp,v)+dyele;
+    D2(vp,v)=D2(vp,v)+dyele+(1.0/radius)*dmass;
 end;
 
 s.nnodes=nnodes;

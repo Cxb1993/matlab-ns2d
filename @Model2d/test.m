@@ -21,7 +21,8 @@ m.X = reshape(X,1,[])';
 m.Y = reshape(Y,1,[])';
 m.Z = 0*m.X;
 
-m.IEN = delaunay(m.X,m.Y,{'Qt','QbB','Qc'});
+%m.IEN = delaunay(m.X,m.Y,{'Qt','QbB','Qc'});
+m.IEN = delaunay(m.X,m.Y);
 
 nvert=size(m.X,1);
 nelem=size(m.IEN,1);
@@ -198,6 +199,7 @@ if(strcmp(problem,'poiseuilleAxi'))
             idbcu=[idbcu i];
             idbcv=[idbcv i];
 
+            uc(i)=0;
             vc(i)=0;
             % poiseuille profile uc(y)
             if(X(i)==1)
