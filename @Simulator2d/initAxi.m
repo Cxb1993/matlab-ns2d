@@ -1,11 +1,11 @@
-function s = init(s)
+function s = initAxi(s)
 %modelo de documentacao a partir de:
 %http://www.engin.umd.umich.edu/CIS/course.des/cis400/matlab/oop.html
 
 %SIMULATOR simulator class constructor.
 %   s = Simulator(m) creates a simulator object from the mesh object
 
-%Name: init
+%Name: initAxi
 %Location: <path>/@Simulator
 %Purpose: initialize the global matrix from elementary matrix
 

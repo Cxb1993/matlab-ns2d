@@ -1,4 +1,4 @@
-function s = step(s,dt,comp,steptype,Re)
+function s = stepAxi(s,dt,comp,steptype,Re)
 
 %modelo de documentacao a partir de:
 %http://www.engin.umd.umich.edu/CIS/course.des/cis400/matlab/oop.html
@@ -6,7 +6,7 @@ function s = step(s,dt,comp,steptype,Re)
 %SIMULATOR simulator class constructor.
 %   s = Simulator(m) creates a simulator object from the mesh object
 
-%Name: step
+%Name: stepAxi
 %Location: <path>/@Simulator
 %Purpose: this is the main program,
 
@@ -88,16 +88,6 @@ if(strcmp(steptype,'uncoupled'))
         %inva=inv(At);
 
         E=E-D*inva*G;
-        r1 = symrcm(-At);
-        r2 = symrcm(-E);
-        At=At(r1,r1);
-        E= E(r2,r2);
-        %R1 = cholinc(-At,1e-4);
-        R1=ichol(At,struct('shape','upper'));
-        %R1=ichol(At);
-        %R2 = cholinc(-E,1e-5);
-        R2=ichol(-E,struct('shape','lower'));
-        %R2=ichol(-E);
 
         s.At=At;
         s.Gt=G;
@@ -106,10 +96,6 @@ if(strcmp(steptype,'uncoupled'))
         s.b1=b1;
         s.b2=b2;
         s.ip=ip;
-        s.R1=R1;
-        s.R2=R2;
-        s.r1=r1;
-        s.r2=r2;
         s.inva=inva;
     else
         inva=s.inva;
@@ -120,18 +106,12 @@ if(strcmp(steptype,'uncoupled'))
         b1=s.b1;
         b2=s.b2;
         ip=s.ip;
-        R1=s.R1;
-        R2=s.R2;
-        r1=s.r1;
-        r2=s.r2;
 
     end;
 
     b1=b1+va.*ip;
 
-    %ut=At\b1;
-    ut(r1,1) = pcg(At,b1(r1),1e-6,20,R1',R1);
-    %ut = pcg(At,b1,1e-6,10,R1',R1);
+    ut=At\b1;
 
     % [A A G][]=[b1]
     % [A A G][]=[b1]
@@ -140,9 +120,7 @@ if(strcmp(steptype,'uncoupled'))
     %E=E-D*inva*G;
     b2=b2-D*ut;
 
-    %pt=E\b2;
-    pt = pcg(-E,-b2,1e-6,20,R2',R2);
-    %pt(r2,1) = pcg(-E,-b2(r2),1e-6,20,R2',R2);
+    pt=E\b2;
     
     ua=ut-inva*G*pt;
 

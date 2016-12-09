@@ -1,9 +1,9 @@
-function [massele,kxx,kyy,kxy,kyx,kx,ky,gxele,gyele,dxele,dyele,dmass,ngleu,nglep,v]=getmgq(t,mele,IEN,X,Y,Z)
+function [massele,kxx,kyy,kxy,kyx,kx,ky,gxele,gyele,dxele,dyele,dmass,ngleu,nglep,v]=getmgqAxi(t,mele,IEN,X,Y,Z)
 
 %TELEMENT element class constructor.
 %   t = TElement(m) creates a element object
 
-%Name: getmgq
+%Name: getmgqAxi
 %Location: <path>/@FEMMiniElement/
 %Purpose: get matrix element with numerical integration - Gauss Quadrature
 
