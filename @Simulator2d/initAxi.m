@@ -48,7 +48,7 @@ for mele = 1:nele
     v3=IEN(mele,3);
     mele/nele
 
-	radius = Y(v1)+Y(v2)+Y(v3)/3.0;
+	radius = (Y(v1)+Y(v2)+Y(v3)) / 3.0;
 
     [massele,kxx,kyy,kxy,kyx,kx,ky,gxele,gyele,dxele,dyele,dmass,ngleu,nglep,v]=getmgqAxi(element,mele,IEN,X,Y,Z);
 

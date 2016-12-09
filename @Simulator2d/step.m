@@ -40,11 +40,16 @@ k=1/Re;
 %[up,vp] = convectLin(s,dt);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% %
-% semi-lagrangeano  --  montagem dos vetores e matriz           %
+% semi-lagrangiano  --  montagem dos vetores e matriz           %
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% %
 
-%va=((1/dt)*s.M-(1-alpha)*k*s.K)*[up;vp]-s.G*s.ps;
-va=((1/dt)*s.M-(1-alpha)*k*s.K)*[velu;velv]-s.G*s.ps;
+%va=((1/dt)*s.M-(1-alpha)*k*s.K)*[up;vp]; 
+va=((1/dt)*s.M-(1-alpha)*k*s.K)*[up;vp]-s.G*s.ps; % com correcao
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% %
+% Lagrangiano  --  montagem dos vetores e matriz           %
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% %
+%va=((1/dt)*s.M-(1-alpha)*k*s.K)*[velu;velv]-s.G*s.ps;
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% %
 % metodo acoplado                                               %
@@ -152,9 +157,10 @@ s.us=us;
 s.vs=vs;
 
 %s.ps=ps;
+
 % correcao na pressao
 % SETUNCOUPLEDBC deve ser ajustado para b2 = 0
-s.ps=s.ps+ps;
+s.ps=s.ps+ps; % correcao na pressao
 
 s.time=s.time+dt;
 
