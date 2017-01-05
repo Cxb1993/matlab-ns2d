@@ -50,7 +50,7 @@ for mele = 1:nele
 
 	radius = (Y(v1)+Y(v2)+Y(v3)) / 3.0;
 
-    [massele,kxx,kyy,kxy,kyx,kx,ky,gxele,gyele,dxele,dyele,dmass,ngleu,nglep,v]=getmgqAxi(element,mele,IEN,X,Y,Z);
+    [massele,kxx,kyy,kxy,kyx,kx,ky,massr,gxele,gyele,dxele,dyele,dmass,ngleu,nglep,v]=getmgqAxi(element,mele,IEN,X,Y,Z);
 
     vp = v(1:3);
     %ngleu: numero de graus de liberdade do elemento associados a velocidade
@@ -60,10 +60,10 @@ for mele = 1:nele
     % M= [0 22]
 
     %K11(v,v) = K11(v,v)+(kxx+kyy);
-    K11(v,v) = K11(v,v)+(kxx+kyy-(1.0/radius)*ky);
+    K11(v,v) = K11(v,v)+(kxx+kyy-ky);
 
     %K22(v,v) = K22(v,v)+(kxx+kyy);
-    K22(v,v) = K22(v,v)+(kxx+kyy-(1.0/radius)*ky+(1.0/(radius*radius))*massele);
+    K22(v,v) = K22(v,v)+(kxx+kyy-ky+massr);
     M(v,v) = M(v,v)+massele;
 
     G1(v,vp)=G1(v,vp)+gxele;
@@ -71,7 +71,7 @@ for mele = 1:nele
 
     D1(vp,v)=D1(vp,v)+dxele;
     %D2(vp,v)=D2(vp,v)+dyele;
-    D2(vp,v)=D2(vp,v)+dyele+(1.0/radius)*dmass;
+    D2(vp,v)=D2(vp,v)+dyele+dmass;
 end;
 
 s.nnodes=nnodes;

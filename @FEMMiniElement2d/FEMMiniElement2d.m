@@ -8,6 +8,7 @@ t.kyx=[];
 t.kyy=[];
 t.kx=[];
 t.ky=[];
+t.massr=[];
 
 t.massele=[];
     
