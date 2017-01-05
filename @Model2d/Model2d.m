@@ -22,6 +22,7 @@ m.uc=[];
 m.vc=[];
 m.pc=[];
 m.IEN=[];
+m.del=[];
 m.outflow=[];
 
 m = class(m,'Model2d');

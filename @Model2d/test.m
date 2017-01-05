@@ -23,7 +23,7 @@ m.Z = 0*m.X;
 
 %m.IEN = delaunay(m.X,m.Y,{'Qt','QbB','Qc'});
 m.del = delaunayTriangulation(m.X,m.Y);
-m.IEN = m.del.ConnectivityList
+m.IEN = m.del.ConnectivityList;
 
 nvert=size(m.X,1);
 nelem=size(m.IEN,1);
