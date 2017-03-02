@@ -37,7 +37,7 @@ alpha=1;
 k=1/Re;
 
 %%% calculo do termo convectivo para o met semi-lagrangeano
-%[up,vp] = convectLin(s,dt);
+[up,vp] = convectLin(s,dt);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% %
 % Lagrangiano  --  montagem dos vetores e matriz                %
@@ -53,7 +53,7 @@ k=1/Re;
 % no pressure correction
 %va=((1/dt)*s.M-(1-alpha)*k*s.K)*[up;vp]; 
 % pressure correction - Semi-Lagrangian
-va=((1/dt)*s.M-(1-alpha)*k*s.K)*[up;vp]-s.G*s.ps; % com correcao
+va=((1/dt)*s.M-(1-alpha)*k*s.K)*[up;vp]-s.G*s.ps; 
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% %
 % metodo acoplado                                               %
@@ -125,7 +125,7 @@ if(strcmp(steptype,'uncoupled'))
     b2=b2-D*ut;
 
     pt=E\b2;
-    
+
     ua=ut-inva*G*pt;
 
     u=[ua;pt];

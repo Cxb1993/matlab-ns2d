@@ -36,7 +36,14 @@ convlin2=sparse(nvert,nvert);
 found=zeros(nvert,1);
 found(s.m.idbcu)=1;
 vetvert=find(found==0);
-vetmele=tsearch(X(1:nvert),Y(1:nvert),IEN(:,1:3),xp(vetvert),yp(vetvert));
+
+% old version of Matlab ( < 2013b )
+%vetmele=tsearch(X(1:nvert),Y(1:nvert),IEN(:,1:3),xp(vetvert),yp(vetvert));
+
+xpc=reshape(xp(vetvert),[],1);
+ypc=reshape(yp(vetvert),[],1);
+vetmele = pointLocation ( s.m.del, [xpc,ypc]); 
+
 subvetvert1=find(vetmele>0);
 
 for iii=1:size(subvetvert1,1)
@@ -76,7 +83,11 @@ end;
 
 subvetvert2=find(found==0);
 ii=subvetvert2;
-jj=dsearch(X(1:nvert),Y(1:nvert),IEN(:,1:3),xp(ii),yp(ii));
+
+% old version of Matlab ( < 2013b )
+%jj=dsearch(X(1:nvert),Y(1:nvert),IEN(:,1:3),xp(ii),yp(ii));
+
+jj=dsearchn([X(1:nvert),Y(1:nvert)],IEN(:,1:3),[xp(ii),yp(ii)]);
 convlin2=sparse(ii,jj,1,nvert,nvert);
 found(ii)=1;
 convlin=convlin+convlin2;
